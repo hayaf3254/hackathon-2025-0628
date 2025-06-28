@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const userRouter = require("./routes/user");
+const suggestRouter = require("./routes/suggest");
+app.use(express.json());
 
 const PORT = 3000;
 
@@ -14,6 +16,6 @@ app.get("/", (req, res) => {
 
 //ルーティング
 app.use("/user", userRouter);
-
+app.use("/suggest", suggestRouter);
 
 app.listen(PORT, () => console.log("サーバーが起動しました"));
