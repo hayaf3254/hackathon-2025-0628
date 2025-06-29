@@ -122,541 +122,820 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="bg-main">
-    <div class="main-card">
-      <h1 class="main-title">目標設定</h1>
-      <p class="main-desc">
-        あなたのキャリア目標や価値観について教えてください。<br />複数選択可能です。
+  <div class="container">
+    <!-- 背景装飾 -->
+    <div class="bg-decoration">
+      <div class="floating-orb orb-1"></div>
+      <div class="floating-orb orb-2"></div>
+      <div class="floating-orb orb-3"></div>
+    </div>
+
+    <!-- ヘッダーカード -->
+    <div class="header-card">
+      <div class="header-icon">🎯</div>
+      <h1 class="header-title">キャリア診断</h1>
+      <p class="header-subtitle">
+        あなたの理想のキャリアを見つけるための<br>
+        いくつかの質問にお答えください
       </p>
     </div>
 
-    <div class="section-card">
-      <div class="section-header">
-        <h2 class="section-title">将来の目標</h2>
-        <p class="section-description">あなたがキャリアで実現したいことは何ですか？</p>
-      </div>
-      <div class="options-list">
-        <template v-for="option in options.goal" :key="option">
+    <!-- 質問セクション -->
+    <div class="questions-container">
+      <!-- 将来の目標 -->
+      <div class="question-card">
+        <div class="question-header">
+          <div class="question-icon">🚀</div>
+          <div class="question-content">
+            <h2 class="question-title">将来の目標</h2>
+            <p class="question-description">あなたがキャリアで実現したいことは何ですか？</p>
+          </div>
+        </div>
+        <div class="options-grid">
           <button
-            class="option-btn"
-            :class="{ selected: formData.goal.includes(option) }"
+            v-for="option in options.goal"
+            :key="option"
+            class="option-button"
+            :class="{ active: formData.goal.includes(option) }"
             @click="handleOptionToggle('goal', option)"
           >
-            {{ option }}
+            <span class="option-text">{{ option }}</span>
+            <div class="option-check">✓</div>
           </button>
-        </template>
-        <button
-          class="option-btn add-btn"
-          @click="showCustomInput.goal = !showCustomInput.goal"
-        >
-          その他
-        </button>
-      </div>
-      <div v-if="showCustomInput.goal" class="custom-input-wrap">
-        <input
-          v-model="customInputs.goal"
-          class="custom-input"
-          type="text"
-          placeholder="カスタム項目を入力..."
-          @keypress.enter="addCustomOption('goal')"
-        />
-        <button class="add-custom-btn" @click="addCustomOption('goal')">追加</button>
-      </div>
-      <div v-if="formData.goal.filter(item => !options.goal.includes(item)).length > 0" class="custom-tags">
-        <span
-          v-for="item in formData.goal.filter(item => !options.goal.includes(item))"
-          :key="item"
-          class="custom-tag"
-        >
-          {{ item }}
-          <button class="remove-tag" @click="removeCustomOption('goal', item)">×</button>
-        </span>
-      </div>
-    </div>
-
-    <!-- 興味・関心のあること -->
-    <div class="section-card">
-      <div class="section-header">
-        <h2 class="section-title">興味・関心のあること</h2>
-        <p class="section-description">どのような分野に興味をお持ちですか？</p>
-      </div>
-      <div class="options-list">
-        <template v-for="option in options.interest" :key="option">
           <button
-            class="option-btn"
-            :class="{ selected: formData.interest.includes(option) }"
+            class="option-button add-option"
+            @click="showCustomInput.goal = !showCustomInput.goal"
+          >
+            <span class="option-text">その他</span>
+            <div class="option-plus">+</div>
+          </button>
+        </div>
+        <div v-if="showCustomInput.goal" class="custom-input-container">
+          <div class="custom-input-wrapper">
+            <input
+              v-model="customInputs.goal"
+              class="custom-input"
+              type="text"
+              placeholder="カスタム項目を入力..."
+              @keypress.enter="addCustomOption('goal')"
+            />
+            <button class="add-button" @click="addCustomOption('goal')">追加</button>
+          </div>
+        </div>
+        <div v-if="formData.goal.filter(item => !options.goal.includes(item)).length > 0" class="custom-tags">
+          <div
+            v-for="item in formData.goal.filter(item => !options.goal.includes(item))"
+            :key="item"
+            class="custom-tag"
+          >
+            <span>{{ item }}</span>
+            <button class="remove-button" @click="removeCustomOption('goal', item)">×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 興味・関心のあること -->
+      <div class="question-card">
+        <div class="question-header">
+          <div class="question-icon">💡</div>
+          <div class="question-content">
+            <h2 class="question-title">興味・関心のあること</h2>
+            <p class="question-description">どのような分野に興味をお持ちですか？</p>
+          </div>
+        </div>
+        <div class="options-grid">
+          <button
+            v-for="option in options.interest"
+            :key="option"
+            class="option-button"
+            :class="{ active: formData.interest.includes(option) }"
             @click="handleOptionToggle('interest', option)"
           >
-            {{ option }}
+            <span class="option-text">{{ option }}</span>
+            <div class="option-check">✓</div>
           </button>
-        </template>
-        <button
-          class="option-btn add-btn"
-          @click="showCustomInput.interest = !showCustomInput.interest"
-        >
-          その他
-        </button>
-      </div>
-      <div v-if="showCustomInput.interest" class="custom-input-wrap">
-        <input
-          v-model="customInputs.interest"
-          class="custom-input"
-          type="text"
-          placeholder="カスタム項目を入力..."
-          @keypress.enter="addCustomOption('interest')"
-        />
-        <button class="add-custom-btn" @click="addCustomOption('interest')">追加</button>
-      </div>
-      <div v-if="formData.interest.filter(item => !options.interest.includes(item)).length > 0" class="custom-tags">
-        <span
-          v-for="item in formData.interest.filter(item => !options.interest.includes(item))"
-          :key="item"
-          class="custom-tag"
-        >
-          {{ item }}
-          <button class="remove-tag" @click="removeCustomOption('interest', item)">×</button>
-        </span>
-      </div>
-    </div>
-
-    <!-- 学んできたこと -->
-    <div class="section-card">
-      <div class="section-header">
-        <h2 class="section-title">学んできたこと</h2>
-        <p class="section-description">専攻・ゼミ・資格など、これまで学習してきた分野を教えてください</p>
-      </div>
-      <div class="options-list">
-        <template v-for="option in options.learn" :key="option">
           <button
-            class="option-btn"
-            :class="{ selected: formData.learn.includes(option) }"
+            class="option-button add-option"
+            @click="showCustomInput.interest = !showCustomInput.interest"
+          >
+            <span class="option-text">その他</span>
+            <div class="option-plus">+</div>
+          </button>
+        </div>
+        <div v-if="showCustomInput.interest" class="custom-input-container">
+          <div class="custom-input-wrapper">
+            <input
+              v-model="customInputs.interest"
+              class="custom-input"
+              type="text"
+              placeholder="カスタム項目を入力..."
+              @keypress.enter="addCustomOption('interest')"
+            />
+            <button class="add-button" @click="addCustomOption('interest')">追加</button>
+          </div>
+        </div>
+        <div v-if="formData.interest.filter(item => !options.interest.includes(item)).length > 0" class="custom-tags">
+          <div
+            v-for="item in formData.interest.filter(item => !options.interest.includes(item))"
+            :key="item"
+            class="custom-tag"
+          >
+            <span>{{ item }}</span>
+            <button class="remove-button" @click="removeCustomOption('interest', item)">×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 学んできたこと -->
+      <div class="question-card">
+        <div class="question-header">
+          <div class="question-icon">📚</div>
+          <div class="question-content">
+            <h2 class="question-title">学んできたこと</h2>
+            <p class="question-description">専攻・ゼミ・資格など、これまで学習してきた分野を教えてください</p>
+          </div>
+        </div>
+        <div class="options-grid">
+          <button
+            v-for="option in options.learn"
+            :key="option"
+            class="option-button"
+            :class="{ active: formData.learn.includes(option) }"
             @click="handleOptionToggle('learn', option)"
           >
-            {{ option }}
+            <span class="option-text">{{ option }}</span>
+            <div class="option-check">✓</div>
           </button>
-        </template>
-        <button class="option-btn add-btn" @click="showCustomInput.learn = !showCustomInput.learn">その他</button>
-      </div>
-      <div v-if="showCustomInput.learn" class="custom-input-wrap">
-        <input
-          v-model="customInputs.learn"
-          class="custom-input"
-          type="text"
-          placeholder="カスタム項目を入力..."
-          @keypress.enter="addCustomOption('learn')"
-        />
-        <button class="add-custom-btn" @click="addCustomOption('learn')">追加</button>
-      </div>
-      <div v-if="formData.learn.filter(item => !options.learn.includes(item)).length > 0" class="custom-tags">
-        <span
-          v-for="item in formData.learn.filter(item => !options.learn.includes(item))"
-          :key="item"
-          class="custom-tag"
-        >
-          {{ item }}
-          <button class="remove-tag" @click="removeCustomOption('learn', item)">×</button>
-        </span>
-      </div>
-    </div>
-
-    <!-- 働き方の希望 -->
-    <div class="section-card">
-      <div class="section-header">
-        <h2 class="section-title">働き方の希望</h2>
-        <p class="section-description">どのような働き方を希望しますか？</p>
-      </div>
-      <div class="options-list">
-        <template v-for="option in options.work" :key="option">
           <button
-            class="option-btn"
-            :class="{ selected: formData.work.includes(option) }"
+            class="option-button add-option"
+            @click="showCustomInput.learn = !showCustomInput.learn"
+          >
+            <span class="option-text">その他</span>
+            <div class="option-plus">+</div>
+          </button>
+        </div>
+        <div v-if="showCustomInput.learn" class="custom-input-container">
+          <div class="custom-input-wrapper">
+            <input
+              v-model="customInputs.learn"
+              class="custom-input"
+              type="text"
+              placeholder="カスタム項目を入力..."
+              @keypress.enter="addCustomOption('learn')"
+            />
+            <button class="add-button" @click="addCustomOption('learn')">追加</button>
+          </div>
+        </div>
+        <div v-if="formData.learn.filter(item => !options.learn.includes(item)).length > 0" class="custom-tags">
+          <div
+            v-for="item in formData.learn.filter(item => !options.learn.includes(item))"
+            :key="item"
+            class="custom-tag"
+          >
+            <span>{{ item }}</span>
+            <button class="remove-button" @click="removeCustomOption('learn', item)">×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 働き方の希望 -->
+      <div class="question-card">
+        <div class="question-header">
+          <div class="question-icon">⚡</div>
+          <div class="question-content">
+            <h2 class="question-title">働き方の希望</h2>
+            <p class="question-description">どのような働き方を希望しますか？</p>
+          </div>
+        </div>
+        <div class="options-grid">
+          <button
+            v-for="option in options.work"
+            :key="option"
+            class="option-button"
+            :class="{ active: formData.work.includes(option) }"
             @click="handleOptionToggle('work', option)"
           >
-            {{ option }}
+            <span class="option-text">{{ option }}</span>
+            <div class="option-check">✓</div>
           </button>
-        </template>
-        <button class="option-btn add-btn" @click="showCustomInput.work = !showCustomInput.work">その他</button>
-      </div>
-      <div v-if="showCustomInput.work" class="custom-input-wrap">
-        <input
-          v-model="customInputs.work"
-          class="custom-input"
-          type="text"
-          placeholder="カスタム項目を入力..."
-          @keypress.enter="addCustomOption('work')"
-        />
-        <button class="add-custom-btn" @click="addCustomOption('work')">追加</button>
-      </div>
-      <div v-if="formData.work.filter(item => !options.work.includes(item)).length > 0" class="custom-tags">
-        <span
-          v-for="item in formData.work.filter(item => !options.work.includes(item))"
-          :key="item"
-          class="custom-tag"
-        >
-          {{ item }}
-          <button class="remove-tag" @click="removeCustomOption('work', item)">×</button>
-        </span>
-      </div>
-    </div>
-
-    <!-- 苦手なこと・避けたい業種 -->
-    <div class="section-card">
-      <div class="section-header">
-        <h2 class="section-title">苦手なこと・避けたい業種</h2>
-        <p class="section-description">避けたい働き方や苦手な業務はありますか？</p>
-      </div>
-      <div class="options-list">
-        <template v-for="option in options.weak" :key="option">
           <button
-            class="option-btn"
-            :class="{ selected: formData.weak.includes(option) }"
+            class="option-button add-option"
+            @click="showCustomInput.work = !showCustomInput.work"
+          >
+            <span class="option-text">その他</span>
+            <div class="option-plus">+</div>
+          </button>
+        </div>
+        <div v-if="showCustomInput.work" class="custom-input-container">
+          <div class="custom-input-wrapper">
+            <input
+              v-model="customInputs.work"
+              class="custom-input"
+              type="text"
+              placeholder="カスタム項目を入力..."
+              @keypress.enter="addCustomOption('work')"
+            />
+            <button class="add-button" @click="addCustomOption('work')">追加</button>
+          </div>
+        </div>
+        <div v-if="formData.work.filter(item => !options.work.includes(item)).length > 0" class="custom-tags">
+          <div
+            v-for="item in formData.work.filter(item => !options.work.includes(item))"
+            :key="item"
+            class="custom-tag"
+          >
+            <span>{{ item }}</span>
+            <button class="remove-button" @click="removeCustomOption('work', item)">×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 苦手なこと・避けたい業種 -->
+      <div class="question-card">
+        <div class="question-header">
+          <div class="question-icon">⚠️</div>
+          <div class="question-content">
+            <h2 class="question-title">苦手なこと・避けたい業種</h2>
+            <p class="question-description">避けたい働き方や苦手な業務はありますか？</p>
+          </div>
+        </div>
+        <div class="options-grid">
+          <button
+            v-for="option in options.weak"
+            :key="option"
+            class="option-button"
+            :class="{ active: formData.weak.includes(option) }"
             @click="handleOptionToggle('weak', option)"
           >
-            {{ option }}
+            <span class="option-text">{{ option }}</span>
+            <div class="option-check">✓</div>
           </button>
-        </template>
-        <button class="option-btn add-btn" @click="showCustomInput.weak = !showCustomInput.weak">その他</button>
+          <button
+            class="option-button add-option"
+            @click="showCustomInput.weak = !showCustomInput.weak"
+          >
+            <span class="option-text">その他</span>
+            <div class="option-plus">+</div>
+          </button>
+        </div>
+        <div v-if="showCustomInput.weak" class="custom-input-container">
+          <div class="custom-input-wrapper">
+            <input
+              v-model="customInputs.weak"
+              class="custom-input"
+              type="text"
+              placeholder="カスタム項目を入力..."
+              @keypress.enter="addCustomOption('weak')"
+            />
+            <button class="add-button" @click="addCustomOption('weak')">追加</button>
+          </div>
+        </div>
+        <div v-if="formData.weak.filter(item => !options.weak.includes(item)).length > 0" class="custom-tags">
+          <div
+            v-for="item in formData.weak.filter(item => !options.weak.includes(item))"
+            :key="item"
+            class="custom-tag"
+          >
+            <span>{{ item }}</span>
+            <button class="remove-button" @click="removeCustomOption('weak', item)">×</button>
+          </div>
+        </div>
       </div>
-      <div v-if="showCustomInput.weak" class="custom-input-wrap">
-        <input
-          v-model="customInputs.weak"
-          class="custom-input"
-          type="text"
-          placeholder="カスタム項目を入力..."
-          @keypress.enter="addCustomOption('weak')"
-        />
-        <button class="add-custom-btn" @click="addCustomOption('weak')">追加</button>
+
+      <!-- その他重視していること -->
+      <div class="question-card">
+        <div class="question-header">
+          <div class="question-icon">💭</div>
+          <div class="question-content">
+            <h2 class="question-title">その他重視していること</h2>
+            <p class="question-description">上記以外で重視している価値観や条件があれば教えてください</p>
+          </div>
+        </div>
+        <div class="textarea-container">
+          <textarea
+            v-model="formData.other"
+            class="textarea-input"
+            rows="4"
+            placeholder="例：企業の社会的責任、職場の多様性、成長性など..."
+          ></textarea>
+        </div>
       </div>
-      <div v-if="formData.weak.filter(item => !options.weak.includes(item)).length > 0" class="custom-tags">
-        <span
-          v-for="item in formData.weak.filter(item => !options.weak.includes(item))"
-          :key="item"
-          class="custom-tag"
-        >
-          {{ item }}
-          <button class="remove-tag" @click="removeCustomOption('weak', item)">×</button>
-        </span>
+
+      <!-- MBTIの結果 -->
+      <div class="question-card">
+        <div class="question-header">
+          <div class="question-icon">🧠</div>
+          <div class="question-content">
+            <h2 class="question-title">MBTIの結果</h2>
+            <p class="question-description">MBTIテストの結果があれば入力してください（任意）</p>
+          </div>
+        </div>
+        <div class="input-container">
+          <input
+            v-model="formData.mbti"
+            class="text-input"
+            type="text"
+            maxlength="4"
+            placeholder="例：ENFP、INTJ など4文字で入力"
+          />
+        </div>
       </div>
     </div>
 
-    <!-- その他重視していること -->
-    <div class="section-card">
-      <div class="section-header">
-        <h2 class="section-title">その他重視していること</h2>
-        <p class="section-description">上記以外で重視している価値観や条件があれば教えてください</p>
-      </div>
-      <textarea
-        v-model="formData.other"
-        class="textarea-input"
-        rows="4"
-        placeholder="例：企業の社会的責任、職場の多様性、成長性など..."
-      ></textarea>
-    </div>
-
-    <!-- MBTIの結果 -->
-    <div class="section-card">
-      <div class="section-header">
-        <h2 class="section-title">MBTIの結果</h2>
-        <p class="section-description">MBTIテストの結果があれば入力してください（任意）</p>
-      </div>
-      <input
-        v-model="formData.mbti"
-        class="text-input-single"
-        type="text"
-        maxlength="4"
-        placeholder="例：ENFP、INTJ など4文字で入力"
-      />
-    </div>
-
-    <div class="form-actions">
-      <button class="submit-btn" @click="handleSubmit">次のステップへ進む</button>
+    <!-- 送信ボタン -->
+    <div class="submit-container">
+      <button class="submit-button" @click="handleSubmit">
+        <span class="submit-icon">🚀</span>
+        <span class="submit-text">診断結果を見る</span>
+      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.bg-main {
+.container {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-  padding: 48px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  animation: fadeIn 0.6s ease;
   position: relative;
+  padding: 40px 20px;
   overflow-x: hidden;
 }
-.bg-main::before {
-  content: '';
+
+.bg-decoration {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="0.5" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1.5" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  z-index: 0;
+  overflow: hidden;
 }
-.main-card {
-  background: rgba(255,255,255,0.9);
+
+.floating-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 32px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.1), 0 8px 25px rgba(0,0,0,0.08);
-  padding: 56px 40px 48px 40px;
-  max-width: 600px;
-  width: 90%;
-  margin-bottom: 32px;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-  border: 1px solid rgba(255,255,255,0.3);
+  animation: float 8s ease-in-out infinite;
 }
-.main-title {
-  font-size: 2.8rem;
-  font-weight: 700;
+
+.orb-1 {
+  width: 200px;
+  height: 200px;
+  top: 10%;
+  left: -5%;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 150px;
+  height: 150px;
+  top: 60%;
+  right: -3%;
+  animation-delay: 2s;
+}
+
+.orb-3 {
+  width: 100px;
+  height: 100px;
+  bottom: 20%;
+  left: 10%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-30px) scale(1.1); }
+}
+
+.header-card {
+  max-width: 600px;
+  margin: 0 auto 60px auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(30px);
+  border-radius: 24px;
+  padding: 48px 40px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: slideUp 0.8s ease-out;
+}
+
+.header-icon {
+  font-size: 3rem;
+  margin-bottom: 24px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.header-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1a202c;
   margin-bottom: 16px;
-  color: #ffffff;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
   letter-spacing: -0.02em;
 }
-.main-desc {
-  font-size: 1.15rem;
-  color: #6b7280;
-  line-height: 1.8;
+
+.header-subtitle {
+  font-size: 1.1rem;
+  color: #4a5568;
+  line-height: 1.6;
   font-weight: 400;
 }
-.section-card {
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(15px);
-  border-radius: 28px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.08), 0 6px 20px rgba(0,0,0,0.05);
-  padding: 40px 32px;
-  max-width: 800px;
-  width: 90%;
-  margin-bottom: 40px;
-  position: relative;
-  z-index: 1;
-  border: 1px solid rgba(255,255,255,0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+.questions-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
-.section-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.12), 0 8px 25px rgba(0,0,0,0.08);
+
+.question-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(30px);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideUp 0.6s ease-out;
 }
-.section-header {
+
+.question-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+.question-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
   margin-bottom: 24px;
 }
-.section-title {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #374151;
+
+.question-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.question-content {
+  flex: 1;
+}
+
+.question-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
   margin-bottom: 8px;
   letter-spacing: -0.01em;
 }
-.section-description {
-  font-size: 1.05rem;
-  color: #6b7280;
+
+.question-description {
+  font-size: 1rem;
+  color: #4a5568;
+  line-height: 1.5;
   font-weight: 400;
 }
-.options-list {
+
+.options-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
   margin-bottom: 16px;
 }
-.option-btn {
-  background: rgba(255,255,255,0.8);
-  border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 20px;
-  padding: 20px 16px;
-  font-size: 1.05rem;
-  color: #374151;
-  font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  width: 100%;
+
+.option-button {
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  backdrop-filter: blur(10px);
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #2d3748;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
-.option-btn:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-  border-color: rgba(102,126,234,0.3);
-  background: rgba(255,255,255,0.95);
+
+.option-button:hover {
+  transform: translateY(-2px);
+  border-color: #667eea;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
 }
-.option-btn.selected {
+
+.option-button.active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-color: transparent;
   color: #ffffff;
-  font-weight: 600;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
-.option-btn.selected::after {
-  content: '✔';
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1rem;
-  color: #ffffff;
-}
-.option-btn.add-btn {
+
+.option-button.add-option {
   border-style: dashed;
-  color: #6b7a99;
-  background: #f4f7fb;
+  border-color: #cbd5e0;
+  color: #718096;
+  background: #f7fafc;
 }
-.option-btn.add-btn:hover {
-  border-color: #1976d2;
-  color: #1976d2;
+
+.option-button.add-option:hover {
+  border-color: #667eea;
+  color: #667eea;
+  background: #ffffff;
 }
-.custom-input-wrap {
+
+.option-text {
+  flex: 1;
+  text-align: left;
+}
+
+.option-check {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.option-button.active .option-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.option-plus {
+  opacity: 0.6;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.custom-input-container {
+  margin-top: 16px;
+}
+
+.custom-input-wrapper {
   display: flex;
-  gap: 10px;
-  margin: 16px 0 0 0;
+  gap: 12px;
+  align-items: center;
 }
+
 .custom-input {
   flex: 1;
   padding: 12px 16px;
-  border: 1.5px solid #b6c6e3;
-  border-radius: 10px;
-  font-size: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  background: #ffffff;
+  transition: border-color 0.2s ease;
 }
-.add-custom-btn {
-  background: #1976d2;
-  color: #fff;
+
+.custom-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.add-button {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
   border: none;
-  border-radius: 10px;
-  padding: 10px 18px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
-.add-custom-btn:hover {
-  background: #1253a2;
+
+.add-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
+
 .custom-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
 }
+
 .custom-tag {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 8px 12px;
-  background: #e0f2fe;
-  color: #0369a1;
+  background: #edf2f7;
+  color: #2d3748;
   border-radius: 20px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
 }
-.remove-tag {
+
+.remove-button {
   background: none;
   border: none;
-  color: #0369a1;
+  color: #718096;
   cursor: pointer;
-  padding: 0 2px;
-  font-size: 1.1em;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+  padding: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
 }
-.remove-tag:hover {
-  opacity: 1;
+
+.remove-button:hover {
+  color: #e53e3e;
 }
+
+.textarea-container,
+.input-container {
+  margin-top: 8px;
+}
+
 .textarea-input {
   width: 100%;
   padding: 16px;
-  border: 1.5px solid #b6c6e3;
+  border: 2px solid #e2e8f0;
   border-radius: 12px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   line-height: 1.6;
   resize: vertical;
   font-family: inherit;
-  background: #fafcff;
+  background: #ffffff;
+  transition: border-color 0.2s ease;
 }
-.text-input-single {
+
+.textarea-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.text-input {
   width: 100%;
   padding: 16px;
-  border: 1.5px solid #b6c6e3;
+  border: 2px solid #e2e8f0;
   border-radius: 12px;
-  font-size: 1rem;
-  background: #fafcff;
+  font-size: 0.95rem;
+  background: #ffffff;
+  transition: border-color 0.2s ease;
 }
-.form-actions {
+
+.text-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.submit-container {
+  max-width: 900px;
+  margin: 60px auto 40px auto;
   text-align: center;
-  margin-bottom: 40px;
-  padding: 0 20px;
 }
-.submit-btn {
-  padding: 18px 36px;
+
+.submit-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 40px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-  color: #fff;
+  color: #ffffff;
   border: none;
-  border-radius: 60px;
+  border-radius: 50px;
   font-size: 1.2rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
   position: relative;
   overflow: hidden;
-  letter-spacing: 0.5px;
-  max-width: 90%;
-  width: auto;
+  letter-spacing: 0.02em;
 }
-.submit-btn::before {
+
+.submit-button::before {
   content: '';
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
 }
-.submit-btn:hover::before {
+
+.submit-button:hover::before {
   left: 100%;
 }
-.submit-btn:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 15px 40px rgba(102,126,234,0.5);
+
+.submit-button:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.5);
 }
-@media (max-width: 600px) {
-  .main-card, .section-card {
-    padding: 20px 8px;
-    max-width: 98vw;
+
+.submit-icon {
+  font-size: 1.3rem;
+}
+
+.submit-text {
+  font-weight: 700;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-  .main-title {
-    font-size: 2.2rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  .section-title {
-    font-size: 1.1rem;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 16px;
   }
-  .option-btn {
+  
+  .header-card {
+    padding: 32px 24px;
+    margin-bottom: 40px;
+  }
+  
+  .header-title {
+    font-size: 2rem;
+  }
+  
+  .header-subtitle {
     font-size: 1rem;
-    padding: 14px 0;
   }
-  .textarea-input, .text-input-single {
-    font-size: 0.95rem;
-    padding: 12px;
+  
+  .question-card {
+    padding: 24px;
   }
-  .submit-btn {
-    width: 85%;
-    padding: 16px 24px;
-    font-size: 1.1rem;
-  }
-  .options-list {
-    grid-template-columns: 1fr;
+  
+  .question-header {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 12px;
   }
+  
+  .question-icon {
+    font-size: 1.8rem;
+  }
+  
+  .question-title {
+    font-size: 1.3rem;
+  }
+  
+  .options-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .option-button {
+    padding: 14px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .custom-input-wrapper {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .add-button {
+    width: 100%;
+  }
+  
+  .submit-button {
+    padding: 18px 32px;
+    font-size: 1.1rem;
+  }
 }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 480px) {
+  .header-title {
+    font-size: 1.8rem;
+  }
+  
+  .question-title {
+    font-size: 1.2rem;
+  }
+  
+  .question-description {
+    font-size: 0.95rem;
+  }
+  
+  .option-button {
+    padding: 12px 14px;
+    font-size: 0.85rem;
+  }
 }
 </style>

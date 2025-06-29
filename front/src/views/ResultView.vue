@@ -7,7 +7,15 @@ const router = useRouter()
 
 function backToHome() {
   suggestionStore.setSuggestion('')
-  router.push('/')
+  router.push('/home')
+}
+
+function goToResume() {
+  router.push({ name: 'resume' })
+}
+
+function goToSelfPR() {
+  router.push({ name: 'selfpr' })
 }
 </script>
 
@@ -23,7 +31,11 @@ function backToHome() {
       <p>結果がありません。ホーム画面から入力を行ってください。</p>
     </div>
 
-    <button class="back-btn" @click="backToHome">トップへ戻る</button>
+          <div class="navigation-buttons">
+        <button class="nav-btn secondary" @click="backToHome">ホームに戻る</button>
+        <button class="nav-btn primary" @click="goToResume">履歴書作成</button>
+        <button class="nav-btn primary" @click="goToSelfPR">自己PR作成</button>
+      </div>
   </div>
 </template>
 
@@ -54,10 +66,8 @@ function backToHome() {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff;
+  text-shadow: 0 4px 15px rgba(0,0,0,0.5);
   letter-spacing: -0.02em;
   position: relative;
   z-index: 1;
@@ -85,7 +95,7 @@ function backToHome() {
 .suggestion-text {
   font-size: 1.2rem;
   line-height: 1.9;
-  color: #374151;
+  color: #1a202c;
   word-break: break-word;
   font-weight: 400;
 }
@@ -97,39 +107,69 @@ function backToHome() {
   position: relative;
   z-index: 1;
 }
-.back-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-  color: #fff;
+.navigation-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+
+.nav-btn {
+  padding: 14px 28px;
   border: none;
-  border-radius: 60px;
-  padding: 18px 40px;
-  font-size: 1.15rem;
+  border-radius: 50px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+}
+
+.nav-btn.secondary {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.nav-btn.secondary:hover {
+  background: #cbd5e0;
+  transform: translateY(-2px);
+}
+
+.nav-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(102,126,234,0.3);
+}
+
+.nav-btn.primary:hover {
+  transform: translateY(-2px);
   box-shadow: 0 10px 30px rgba(102,126,234,0.4);
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-  letter-spacing: 0.5px;
 }
-.back-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s;
+
+@media (max-width: 600px) {
+  .result-card {
+    padding: 24px 16px;
+    max-width: 95vw;
+  }
+  
+  .result-title {
+    font-size: 1.6rem;
+  }
+  
+  .result-text {
+    font-size: 1rem;
+  }
+  
+  .navigation-buttons {
+    flex-direction: column;
+  }
+  
+  .nav-btn {
+    width: 100%;
+  }
 }
-.back-btn:hover::before {
-  left: 100%;
-}
-.back-btn:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 15px 40px rgba(102,126,234,0.5);
-}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }

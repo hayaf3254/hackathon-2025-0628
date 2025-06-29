@@ -9,12 +9,20 @@ const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemi
 
 function buildPrompt(data) {
     return `
-以下の情報をもとに、27卒の履歴書を出力してください。
+以下の情報をもとに、履歴書を出力してください。
 
 #入力情報
 大学名(universityName):${data.universityName}
 学部 (facultyName):${data.facultyName}
 学科 (departmentName):${data.departmentName}
+高校名(highSchoolName):${data.highSchoolName}
+高校卒業年(highSchoolGraduationYear):${data.highSchoolGraduationYear}
+高校卒業月(highSchoolGraduationMonth):${data.highSchoolGraduationMonth}
+大学入学年(universityEntranceYear):${data.universityEntranceYear}
+大学入学月(universityEntranceMonth):${data.universityEntranceMonth}
+大学卒業予定年(universityGraduationYear):${data.universityGraduationYear}
+大学卒業予定月(universityGraduationMonth):${data.universityGraduationMonth}
+
 
 #出力フォーマット(この形を厳守してください。例文を書く必要はありません。)
 
@@ -25,23 +33,17 @@ function buildPrompt(data) {
 メールアドレス:
 
 学歴
-卒業年: 2027年3月 卒業見込み
-大学名: ${data.universityName}
-学部: ${data.facultyName}
-学科: ${data.departmentName}
-取得見込み学位: (例: 学士)
+${data.highSchoolGraduationYear}年 ${data.highSchoolGraduationMonth}月 ${data.highSchoolName}卒業
+${data.universityEntranceYear}年 ${data.universityEntranceMonth}月 ${data.universityName} ${data.facultyName} ${data.departmentName}入学
+${data.universityGraduationYear}年 ${data.universityGraduationMonth}月 ${data.universityName} ${data.facultyName} ${data.departmentName}卒業見込み
 
 職務経歴
-(新卒のため、特筆すべき職務経歴がない場合は「なし」と記載してください。または、アルバイト経験やインターンシップ経験があれば具体的に記入してください。)
 
 資格・免許
-(取得済みの資格や免許があれば記入してください。例: 普通自動車第一種運転免許)
 
 自己PR
-(あなたの強みや、学業で得た経験、アルバイトやサークル活動で培ったスキルなどを具体的に記入してください。課題解決能力、コミュニケーション能力、リーダーシップなど、具体的なエピソードを交えて説明すると効果的です。)
 
 志望動機
-（応募企業への志望動機を具体的に記入してください。企業研究を通じて、なぜその企業で働きたいのか、どのように貢献できるのかを明確に伝えましょう。）
 `;
 }
 
