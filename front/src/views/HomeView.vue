@@ -1,5 +1,10 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useSuggestionStore } from '../stores/suggestion'
+
+const router = useRouter()
+const suggestionStore = useSuggestionStore()
 
 const formData = ref({
   goal: [],
@@ -91,9 +96,28 @@ function removeCustomOption(category, option) {
   formData.value[category] = formData.value[category].filter(item => item !== option)
 }
 
-function handleSubmit() {
-  alert('データが保存されました！次のステップに進みます。')
-  console.log('Form Data:', formData.value)
+async function handleSubmit() {
+  try {
+    const response = await fetch('http://localhost:3000/suggest', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData.value)
+    })
+
+    if (!response.ok) {
+      throw new Error(`サーバーエラー: ${response.status}`)
+    }
+
+    const data = await response.json()
+    // 取得した結果をストアに保存し、結果表示ページへ遷移
+    suggestionStore.setSuggestion(data.suggestion)
+    router.push({ name: 'result' })
+  } catch (error) {
+    console.error('送信に失敗しました:', error)
+    alert('Gemini への送信に失敗しました。時間を置いて再度お試しください。')
+  }
 }
 </script>
 
@@ -353,54 +377,86 @@ function handleSubmit() {
 <style scoped>
 .bg-main {
   min-height: 100vh;
-  background: #f4f7fb;
-  padding: 32px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+  padding: 48px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  animation: fadeIn 0.6s ease;
+  position: relative;
+  overflow-x: hidden;
+}
+.bg-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="0.5" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1.5" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+  z-index: 0;
 }
 .main-card {
-  background: #e9f0fa;
-  border-radius: 24px;
-  box-shadow: 0 6px 18px rgba(80,120,200,0.08);
-  padding: 40px 32px 32px 32px;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(20px);
+  border-radius: 32px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1), 0 8px 25px rgba(0,0,0,0.08);
+  padding: 56px 40px 48px 40px;
   max-width: 600px;
   width: 90%;
   margin-bottom: 32px;
   text-align: center;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255,255,255,0.3);
 }
 .main-title {
-  font-size: 2.4rem;
-  font-weight: bold;
+  font-size: 2.8rem;
+  font-weight: 700;
   margin-bottom: 16px;
-  color: #222b45;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  letter-spacing: -0.02em;
 }
 .main-desc {
-  font-size: 1.1rem;
-  color: #4b587c;
-  line-height: 1.7;
+  font-size: 1.15rem;
+  color: #6b7280;
+  line-height: 1.8;
+  font-weight: 400;
 }
 .section-card {
-  background: #fff;
-  border-radius: 22px;
-  box-shadow: 0 6px 18px rgba(80,120,200,0.08);
-  padding: 32px 24px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(15px);
+  border-radius: 28px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08), 0 6px 20px rgba(0,0,0,0.05);
+  padding: 40px 32px;
   max-width: 800px;
   width: 90%;
   margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.section-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.12), 0 8px 25px rgba(0,0,0,0.08);
 }
 .section-header {
   margin-bottom: 24px;
 }
 .section-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #222b45;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #374151;
   margin-bottom: 8px;
+  letter-spacing: -0.01em;
 }
 .section-description {
-  font-size: 1rem;
-  color: #6b7a99;
+  font-size: 1.05rem;
+  color: #6b7280;
+  font-weight: 400;
 }
 .options-list {
   display: grid;
@@ -409,34 +465,43 @@ function handleSubmit() {
   margin-bottom: 16px;
 }
 .option-btn {
-  background: #f7faff;
-  border: 2px solid #e3eaf7;
-  border-radius: 14px;
-  padding: 18px 0;
+  background: rgba(255,255,255,0.8);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 20px 16px;
   font-size: 1.05rem;
-  color: #222b45;
+  color: #374151;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   width: 100%;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(80,120,200,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  backdrop-filter: blur(10px);
+}
+.option-btn:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  border-color: rgba(102,126,234,0.3);
+  background: rgba(255,255,255,0.95);
 }
 .option-btn.selected {
-  background: #e0edff;
-  border-color: #5f9efa;
-  color: #1754b8;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  color: #ffffff;
   font-weight: 600;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102,126,234,0.3);
 }
 .option-btn.selected::after {
   content: '✔';
   position: absolute;
-  right: 16px;
+  right: 18px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 1rem;
-  color: #1754b8;
+  color: #ffffff;
 }
 .option-btn.add-btn {
   border-style: dashed;
@@ -524,23 +589,42 @@ function handleSubmit() {
 }
 .form-actions {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
+  padding: 0 20px;
 }
 .submit-btn {
-  padding: 16px 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 18px 36px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
   color: #fff;
   border: none;
-  border-radius: 14px;
+  border-radius: 60px;
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+  max-width: 90%;
+  width: auto;
+}
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+.submit-btn:hover::before {
+  left: 100%;
 }
 .submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(102,126,234,0.5);
 }
 @media (max-width: 600px) {
   .main-card, .section-card {
@@ -548,7 +632,7 @@ function handleSubmit() {
     max-width: 98vw;
   }
   .main-title {
-    font-size: 1.5rem;
+    font-size: 2.2rem;
   }
   .section-title {
     font-size: 1.1rem;
@@ -562,11 +646,17 @@ function handleSubmit() {
     padding: 12px;
   }
   .submit-btn {
-    width: 90%;
+    width: 85%;
+    padding: 16px 24px;
+    font-size: 1.1rem;
   }
   .options-list {
     grid-template-columns: 1fr;
     gap: 12px;
   }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>

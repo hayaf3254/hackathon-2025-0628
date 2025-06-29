@@ -1,8 +1,10 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const userRouter = require("./routes/user");
 const suggestRouter = require("./routes/suggest");
 app.use(express.json());
+app.use(cors());
 
 const PORT = 3000;
 
