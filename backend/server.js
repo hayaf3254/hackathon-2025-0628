@@ -3,6 +3,7 @@ const cors = require("cors");
 const app = express();
 const userRouter = require("./routes/user");
 const suggestRouter = require("./routes/suggest");
+const resumeRouter = require("./routes/resume");
 app.use(express.json());
 app.use(cors());
 
@@ -19,5 +20,6 @@ app.get("/", (req, res) => {
 //ルーティング
 app.use("/user", userRouter);
 app.use("/suggest", suggestRouter);
+app.use("/resume", resumeRouter);
 
 app.listen(PORT, () => console.log("サーバーが起動しました"));
