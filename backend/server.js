@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const userRouter = require("./routes/user");
 const suggestRouter = require("./routes/suggest");
+const resumeRouter = require("./routes/resume");
 app.use(express.json());
 
 const PORT = 3000;
@@ -17,5 +18,6 @@ app.get("/", (req, res) => {
 //ルーティング
 app.use("/user", userRouter);
 app.use("/suggest", suggestRouter);
+app.use("/resume", resumeRouter);
 
 app.listen(PORT, () => console.log("サーバーが起動しました"));
