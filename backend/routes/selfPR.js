@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
     });
 
     const result = response.data.candidates?.[0]?.content?.parts?.[0]?.text; //返ってきた文章（おすすめ）を抽出して result に格納
-    res.json({ suggestion: result });
+    res.json({ generatedSelfPR: result });
   } catch (error) {
     console.error("❌ APIエラー:", error.response?.data || error.message);
     res.status(500).json({ error: "Gemini API の呼び出しに失敗しました" });
