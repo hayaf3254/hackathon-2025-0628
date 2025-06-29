@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 
 //ルーティング
 app.use("/user", userRouter);
-app.use("/suggest", suggestRouter);
 app.use("/resume", resumeRouter);
+app.use("/selfPR", selfPR_Router);
 app.use("/suggest", suggestRouter);
 app.listen(PORT, () => console.log("サーバーが起動しました"));
