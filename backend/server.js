@@ -4,6 +4,7 @@ const app = express();
 const userRouter = require("./routes/user");
 const suggestRouter = require("./routes/suggest");
 const resumeRouter = require("./routes/resume");
+const selfPR_Router = require("./routes/selfPR");
 app.use(express.json());
 app.use(cors());
 
@@ -21,5 +22,5 @@ app.get("/", (req, res) => {
 app.use("/user", userRouter);
 app.use("/suggest", suggestRouter);
 app.use("/resume", resumeRouter);
-
+app.use("/suggest", suggestRouter);
 app.listen(PORT, () => console.log("サーバーが起動しました"));
